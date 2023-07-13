@@ -26,7 +26,7 @@ jobs:
     name: MegaLinter
     runs-on: ubuntu-latest
     container:
-      image: oxsecurity/megalinter@v7
+      image: oxsecurity/megalinter@latest
 
     permissions:
       # Give the default GITHUB_TOKEN write permission to commit and push, comment issues & post new PR
