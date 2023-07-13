@@ -25,6 +25,8 @@ jobs:
   build:
     name: MegaLinter
     runs-on: ubuntu-latest
+    container:
+      image: oxsecurity/megalinter:v7
     permissions:
       # Give the default GITHUB_TOKEN write permission to commit and push, comment issues & post new PR
       # Remove the ones you do not need
@@ -45,7 +47,7 @@ jobs:
         id: ml
         # You can override MegaLinter flavor used to have faster performances
         # More info at https://megalinter.io/flavors/
-        uses: oxsecurity/megalinter/flavors/javascript@beta
+        #uses: oxsecurity/megalinter/flavors/javascript@beta
         env:
           # All available variables are described in documentation
           # https://megalinter.io/configuration/#shared-variables
