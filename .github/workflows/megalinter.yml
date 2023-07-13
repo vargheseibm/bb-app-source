@@ -1,7 +1,7 @@
 ---
 # MegaLinter GitHub Action configuration file
 # More info at https://megalinter.io
-name: MegaLinter for mega-linter-runner
+name: MegaLinter
 
 # Start lint on any push and on pull requests
 on:
