@@ -65,3 +65,9 @@ jobs:
           path: |
             megalinter-reports
             mega-linter.log
+      
+      - name: Display output
+        run: |
+          echo "Output is ${{ steps.ml.outputs}}"
+         
+          output1: steps.ml.outputs
