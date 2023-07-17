@@ -1,0 +1,52 @@
+# Configuration file for MegaLinter
+# See all available variables at https://megalinter.io/configuration/ and in linters documentation
+---
+### output settings
+CLEAR_REPORT_FOLDER: true
+
+# LOG_LEVEL: DEBUG # necessary to see raw linter output and warnings on successful runs
+PRINT_ALL_FILES: true
+SHOW_ELAPSED_TIME: true
+
+FILEIO_REPORTER: false # do not upload reports to file.io
+
+### handling errors/warnings
+FORMATTERS_DISABLE_ERRORS: false # all formatter warnings are treated as errors
+FAIL_IF_MISSING_LINTER_IN_FLAVOR: true
+
+APPLY_FIXES: all # all, none, or list of linter keys
+
+### general filter settings
+IGNORE_GITIGNORED_FILES: true # seems ineffective at least for local runs?
+FILTER_REGEX_EXCLUDE: (build/|\.venv/|\.\w+_cache/|megalinter-reports/)
+
+### linter selection
+DISABLE_LINTERS:
+  - MAKEFILE_CHECKMAKE # included checks seems useless for our purpose
+  - RST_RST_LINT # incompatible with Sphinx directives and roles, covered by RST_RSTCHECK
+  - REPOSITORY_DEVSKIM # can't ignore extra globs/gitignore, upstream fix pending release
+  - REPOSITORY_KICS # irrelevant, broken, waiting for update to fixed v1.7.2
+
+### individual linter settings
+MARKDOWN_MARKDOWNLINT_CONFIG_FILE: .markdownlint.yaml # uses .json by default
+PYTHON_BLACK_ARGUMENTS: [--line-length, "120"]
+PYTHON_FLAKE8_ARGUMENTS: [--max-line-length, "120"]
+PYTHON_RUFF_ARGUMENTS: [--ignore, E501] # ignore line too long
+# REPOSITORY_DEVSKIM_ARGUMENTS: [--skip-git-ignored-files]
+REPOSITORY_GIT_DIFF_PRE_COMMANDS: # set git whitespace options (global = only inside linter container)
+  - cwd: workspace
+    command: |
+      git config --global core.autocrlf input
+      git config --global core.whitespace tab-in-indent,cr-at-eol,-blank-at-eol
+REPOSITORY_SECRETLINT_ARGUMENTS: [--secretlintignore, .gitignore, "**/*"]
+RST_RSTCHECK_CONFIG_FILE: LINTER_DEFAULT # workaround for broken built-in args, finds .rstcheck.cfg automatically
+
+### pre/post run settings
+PRE_COMMANDS:
+  # fix unix perms for local runs: default non-root umask, to create files/dirs with correct standard permissions
+  - cwd: workspace
+    command: umask 002
+POST_COMMANDS:
+  # fix unix ownership: change owner of all files/dirs recursively to workspace dir owner
+  - cwd: workspace
+    command: chown -R "$(stat -c "%u:%g" ./)" ./
